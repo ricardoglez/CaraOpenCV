@@ -35,7 +35,7 @@ void setup() {
   fondo = createGraphics(width, height);
   fondoPixeles = new int[width* height];
   fondo.beginDraw();
-  fondo.image(imgF,0,0);
+  fondo.image(imgF, 0, 0);
   fondo.endDraw();
   caraCV.loadCascade(OpenCV.CASCADE_FRONTALFACE);  
   //Comienza la detección
@@ -44,32 +44,38 @@ void setup() {
 }
 
 void draw() {
-  background(255);
+  pushMatrix();
+  translate(1319, -799);
+  rotate(HALF_PI);
+  scale(2.0);
+  //background(255);
+
   //actualizarFondo();
   // Leer y cargar la captura al opencv
   //image(fondo,0,0);
   cap.read();
   caraCV.loadImage(cap);
-  
+
   contornos.loadImage(cap);
   contornos.threshold(80);
   contornos.updateBackground();
   contornos.dilate();
   contornos.erode();
   contours = contornos.findContours();
-  
   //fill(50,50,50,100);
- 
-  
   stroke(0);
-   noFill();
+  noFill();
   startDet(); // comienza el procesos de detección
-   noFill();
-   strokeWeight(5);
+  noFill();
+  strokeWeight(1);
+  dib.beginDraw();
   for (Contour contour : contours) {
-    contour.draw();
+    dib.add(contour.draw());
   }
+  dib.endDraw();
+  popMatrix();
 }
+
 
 boolean startDet() {
   int x_, y_;
@@ -77,6 +83,12 @@ boolean startDet() {
   if (caras.length != 0) { //Si detecta alguna caraCV ..
     noFill();
     background(255);
+    
+    pushMatrix();
+    translate(-114, -60);
+    scale(1.0);
+    image(fondo, 0, 0);
+    popMatrix();
     //stroke(0, 255, 0);
     strokeWeight(.5);
     for (int i = 0; i < caras.length; i++) { // Dibuja x por cada caraCV ...
@@ -90,8 +102,12 @@ boolean startDet() {
 
     //actualizarFondo();
     // Dibujar el fondo sin personas
-    //image(fondo, 0, 0);
-    background(255,255,255,100);
+    translate(-114, -60);
+    pushMatrix();
+    scale(1.0);
+    image(fondo, 0, 0);
+    popMatrix();
+    //background(255,255,255,100);
     //text("NARIZ DE PERRO GRIS", width / 2 , height / 2);
     return false;
   }
@@ -105,12 +121,12 @@ void dTextoFull(int rx, int ry, int rh, int rw, PFont font) {
   //textMode(CENTER);
   //fill(0,255,0);
   //Dibujar el rectangulo de la cara detectada
- //stroke(0,255,0);
+  //stroke(0,255,0);
   //rect(rx, ry, rw, rh);
   //Por cada rectangulo que encuentre
-  int palabra = int (random(0,3));
+  int palabra = int (random(0, 3));
   for (int i = 0; i <= quien.length-1; i++) {
-    
+
     //fill(0);
     //Dibujar la matrix de palabras
     for (int ubicaX = 0; ubicaX <= width; ubicaX += wText  ) {
