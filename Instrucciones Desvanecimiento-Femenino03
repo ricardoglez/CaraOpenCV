@@ -1,0 +1,17 @@
+Instrucciones:
+
+Este programa puede ser reproducido en cualquier version posterior a la 2.0 de processing. Sin embargo es necesario tener instaladas una serie de librerias para su correcto funcionamiento,  entre los requisitos principales para que funcione el programa se encuentran los siguientes:
+
+
+Requerimientos Técinos.
+
+Processing 2.0 o posterior
+Camara web
+Libreria OpenCV -Vision Computarizada-
+Libreria Minim -Archivos de audio-
+Libreria VideoUtils -Manipulación de imagenes en movimiento-
+
+
+* NOTA: Todas las librerias se deben de instalar manualmente ingresando cada carpeta ej "opencv_processing" en una ruta similar a la siguiente /processing/libraries/"Aqui deben ir las librerias"
+
+Las librerias van incluidas en este archivo.
