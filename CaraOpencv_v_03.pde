@@ -3,7 +3,7 @@ import java.awt.Rectangle;
 import processing.video.*;
 import ddf.minim.*;
 
-int numAudios = 20;
+int numAudios = 31;
 String tu = "TU";
 String[] quien = { "MADRE", "HERMANA", "NOVIA", "ABUELA"};
 PImage imgF;
@@ -27,7 +27,7 @@ PGraphics fondoC, dib; // Lienzo donde se almacena la captura del fondo sin pers
  */////////////////////////////////////////////
 void setup() {
   size(1280, 720);
-  println(Capture.list());
+  //println(Capture.list());
   //Inicializacion de captura, procesos de CV y creación de lienzo
   fondoPixeles = new int[width * height];
   minim = new Minim(this);
@@ -55,15 +55,17 @@ void setup() {
       println("Nariz de codorniz", sample[i]);
     }
     audioAc[i] = false;
+    println("Cargando ..."+ i);
   }
   println("Carga Completa...");
   fondoC = createGraphics(width, height);
   dib = createGraphics(width, height);
   //caras = caraCV.detect();
- // frameRate(6);
+  // frameRate(6);
 }
 /*/////////////////////7
  LOOP INICIAL
+ Todo lo que sicede aqui se trabaja en la capa base de processing
  *////////////////////////
 void draw() {
   pushMatrix();
@@ -75,7 +77,7 @@ void draw() {
   //fill(50,50,50,100);
   stroke(0);
   noFill();
-  //dibujarFondo();
+  dibujarFondo();
   preprocessings();
   // comienza el procesos de detección
   if (startDet()) {
@@ -105,9 +107,9 @@ void preprocessings() {
  Dibujar COntornos encontrados
  *////////////////////////////////////
 void dibujarContornos( float size) {
-  translate(45, 23);
+  translate(-33, -17);
   pushMatrix();
-  scale(1.0);
+  scale(1.4);
   strokeWeight(size);
   for (Contour contour : contours) {
     contour.draw();
@@ -122,12 +124,11 @@ boolean startDet() {
   caras = caraCV.detect();
   if (caras.length != 0) { //Si detecta alguna caraCV ..
     hayAlguien = true;
-
     for (int i = 0; i < caras.length; i++) { // Dibuja x por cada caraCV ...
       //dibujarFondo();
       x_ = caras[i].x; // ubicacion del rostro x
       y_ = caras[i].y; // ubicacion del rostro y
-      // Dibujar el texto como matriz, necesita la ubicacion, el tamaño del rostro y la fuente que usara el text
+      dibujarFondo();// Dibujar el texto como matriz, necesita la ubicacion, el tamaño del rostro y la fuente que usara el text
       dTextoFull(x_, y_, caras[i].width, caras[i].height, f);
       dibujarContornos(.5);
     }
@@ -146,11 +147,18 @@ boolean startDet() {
  *////////////////////////////7
 void dibujarFondo() {
   fondoC.beginDraw();
-  fondoC.scale(0.5);
-  fondoC.background(0, 0);
-  fondoC.image(imgF, 0, 0);
+  fondoC.background(7, 0 );
   fondoC.endDraw();
-  image(fondoC, -269, -20);
+
+  fondoC.beginDraw();
+  fondoC.pushMatrix();
+  fondoC.translate(2, 0);
+  fondoC.scale(0.4);
+  fondoC.background(136, 0);
+  fondoC.image(imgF, 12, 0);
+  fondoC.endDraw();
+  image(fondoC, -85, -6);
+  fondoC.popMatrix();
 }
 /*///////////////////////////////////////////////////
  Dibujar la matriz de texto al rededor de las caras
@@ -158,17 +166,16 @@ void dibujarFondo() {
  *///////////////////////////////////////////////////
 void dTextoFull(int rx, int ry, int rh, int rw, PFont font) {
   int wText =   (rw /4);
-  int hText  = (rh /2);
-  int cual = int(map(rw, 0, 400, 0, numAudios));
-  sample[cual].play();
-  //textMode(CENTER);
-  int longAudio = sample[cual].length();
-  while(sample[cual].position() <= longAudio){
-    println("PLAYING ");
-    
-    
+  int hText  = (rh /3);
+  int cual = int(map(rw, 1, 300, 1, numAudios-1));
+  cual = constrain(cual, 1, 300);
+  //println("# ",cual," Long: " , sample[cual].length(), " Position: " ,  sample[cual].position(), " Levels: ", sample[cual].right.level());
+  if (sample[cual].right.level() == 0) {
+    //println(sample[cual].position());
+    sample[cual].skip(-sample[cual].length());
+    //println("esta ya habia pasado regresate", sample[cual].position());
   }
-  //fill(0,255,0);
+  sample[cual].play();
   //Dibujar el rectangulo de la cara detectada
   //stroke(0,255,0);
   //rect(rx, ry, rw, rh);
@@ -181,28 +188,22 @@ void dTextoFull(int rx, int ry, int rh, int rw, PFont font) {
       for (int ubicaY = 0; ubicaY <= height; ubicaY += hText ) {
         int palabra = int (random(0, 3));
         if (!(ubicaX >= rx - wText && ubicaY >= ry - hText ) || !(ubicaX <= ( rx + rw )  && ubicaY <= ( ry + rh + hText )) ) {
-          //dib.beginDraw();
-          translate(random(3, 1), random(-10, 13));
-          //dib.pushMatrix();
-          //dib.image(imgF, 0, 0);
+          translate(random(0, 3), random(-3, 4));
           fill(0);
-          textFont(font, wText / int(random(1, 6)));
-          text(tu + '\n' + " " + quien[palabra], ubicaX+63, ubicaY+2, wText+30, hText+2);
-          //dib.popMatrix();
-          //dib.endDraw();
+          textFont(font, wText / int(random(1,6)));
+          text(tu + '\n' + " " + quien[palabra], ubicaX+-90, ubicaY+-1, wText+111, hText+2);
         }
       }
     }
   }
   popMatrix();
-  
 }
 /*
-Activa el sonido 
+Activa el sonido
  */
 void activarSampleo() {
   /*
-  
+
    Aqui debe de ir eel proceso de seleccion del sampleo
    asi como su activacion y monitoreo de tiempo
    */
