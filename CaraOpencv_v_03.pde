@@ -110,6 +110,7 @@ void dibujarContornos( float size) {
   pushMatrix();
   scale(1.4);
   stroke(0);
+  fill(0,0,0,255);
   strokeWeight(size);
   for (Contour contour : contours) {
     contour.draw();
@@ -130,7 +131,7 @@ boolean startDet() {
       y_ = caras[i].y; // ubicacion del rostro y
       dibujarFondo();// Dibujar el texto como matriz, necesita la ubicacion, el tamaño del rostro y la fuente que usara el text
       dTextoFull(x_, y_, caras[i].width, caras[i].height, f);
-      dibujarContornos(.2);
+      dibujarContornos(.1);
     }
   } else { // Si no detecta nada ...
     // Dibujar el fondo Fijo
@@ -191,9 +192,9 @@ void dTextoFull(int rx, int ry, int rh, int rw, PFont font) {
         int palabra = int (random(0, 3));
         if (!(ubicaX >= rx - wText && ubicaY >= ry - hText ) || !(ubicaX <= ( rx + rw )  && ubicaY <= ( ry + rh + hText )) ) {
           translate(random(0,3), sin(rh)*map(rw, 10, 150, 3,7));
-          fill(0);
+          fill(0,20,20,255);
           textFont(font, wText / int(random(1,6)));
-          text(tu + '\n' + " " + quien[palabra], ubicaX+-90, ubicaY+-1, wText+116, hText+14);
+          text(tu + "           " + " \n" + quien[palabra]+ " \n" , ubicaX+-90, ubicaY+-1, wText+116, hText+14);
         }
       }
     }
