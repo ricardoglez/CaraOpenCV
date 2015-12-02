@@ -3,7 +3,7 @@ import java.awt.Rectangle;
 import processing.video.*;
 import ddf.minim.*;
 
-int numAudios = 31;
+int numAudios = 24;
 String tu = "TU";
 String[] quien = { "MADRE", "HERMANA", "NOVIA", "ABUELA"};
 PImage imgF;
@@ -42,20 +42,19 @@ void setup() {
   contornos.gray();
   contornos.threshold(89);
   contornos.startBackgroundSubtraction(20, 10, .02);
-  String filename = "A" ;
+  String filename = "Sample" ;
   String ext = ".mp3" ;
   String archivo;
   for (int i = 0; i <= numAudios-1; i++) {
-    String n = '0' + str(i);
-    archivo = filename + n + ext;
-    println(archivo);
+    String n =   str(i);
+    archivo = filename +"0"+ n + ext;
+    //println(archivo);
     sample[i] = minim.loadFile(archivo, 2048);
-    println("2");
     if ( sample[i] == null ) {
       println("Nariz de codorniz", sample[i]);
     }
     audioAc[i] = false;
-    println("Cargando ..."+ i);
+    println("Cargando ..."+ i+" "+archivo);
   }
   println("Carga Completa...");
   fondoC = createGraphics(width, height);
@@ -110,6 +109,7 @@ void dibujarContornos( float size) {
   translate(-33, -17);
   pushMatrix();
   scale(1.4);
+  stroke(0);
   strokeWeight(size);
   for (Contour contour : contours) {
     contour.draw();
@@ -130,7 +130,7 @@ boolean startDet() {
       y_ = caras[i].y; // ubicacion del rostro y
       dibujarFondo();// Dibujar el texto como matriz, necesita la ubicacion, el tamaño del rostro y la fuente que usara el text
       dTextoFull(x_, y_, caras[i].width, caras[i].height, f);
-      dibujarContornos(.5);
+      dibujarContornos(.2);
     }
   } else { // Si no detecta nada ...
     // Dibujar el fondo Fijo
@@ -166,10 +166,11 @@ void dibujarFondo() {
  *///////////////////////////////////////////////////
 void dTextoFull(int rx, int ry, int rh, int rw, PFont font) {
   int wText =   (rw /4);
-  int hText  = (rh /3);
-  int cual = int(map(rw, 1, 300, 1, numAudios-1));
-  cual = constrain(cual, 1, 300);
-  //println("# ",cual," Long: " , sample[cual].length(), " Position: " ,  sample[cual].position(), " Levels: ", sample[cual].right.level());
+  int hText  = (rh /3); 
+  
+  int cual = int(map(rw, 20,140, 1, numAudios-1));
+  cual = constrain(cual, 1, numAudios-1);
+  println(" # ",cual," Long: " , sample[cual].length(), " Position: " ,  sample[cual].position(), " Levels: ", sample[cual].right.level());
   if (sample[cual].right.level() == 0) {
     //println(sample[cual].position());
     sample[cual].skip(-sample[cual].length());
@@ -182,16 +183,17 @@ void dTextoFull(int rx, int ry, int rh, int rw, PFont font) {
   //Por cada rectangulo que encuentre dibujar palabras a su alrededor
   ///translate(-407, -17);
   pushMatrix();
+  //translate(random(0, 3), random(-3, 4));
   for (int i = 0; i <= quien.length-1; i++) {
     //Dibujar la matrix de palabras
-    for (int ubicaX = 0; ubicaX <= width; ubicaX += wText  ) {
-      for (int ubicaY = 0; ubicaY <= height; ubicaY += hText ) {
+    for (int ubicaX = 0; ubicaX <= width/2; ubicaX += wText  ) {
+      for (int ubicaY = 0; ubicaY <= height/2; ubicaY += hText ) {
         int palabra = int (random(0, 3));
         if (!(ubicaX >= rx - wText && ubicaY >= ry - hText ) || !(ubicaX <= ( rx + rw )  && ubicaY <= ( ry + rh + hText )) ) {
-          translate(random(0, 3), random(-3, 4));
+          translate(random(0,3), sin(rh)*map(rw, 10, 150, 3,7));
           fill(0);
           textFont(font, wText / int(random(1,6)));
-          text(tu + '\n' + " " + quien[palabra], ubicaX+-90, ubicaY+-1, wText+111, hText+2);
+          text(tu + '\n' + " " + quien[palabra], ubicaX+-90, ubicaY+-1, wText+116, hText+14);
         }
       }
     }
